@@ -122,7 +122,9 @@ func (c Chart) Push(settings *cli.EnvSettings, registry string, insecure bool, p
 	}
 	defer os.Remove(chartFilePath)
 
-	err = c.push(chartFilePath, fmt.Sprintf("%s/%s/%s:%s", registry, chartutil.ChartsDir, c.Name, c.Version))
+	// Use chart name as repository name, retaining the chart/ prefix
+	repoName := fmt.Sprintf("%s/%s", chartutil.ChartsDir, c.Name)
+	err = c.push(chartFilePath, fmt.Sprintf("%s/%s:%s", registry, repoName, c.Version))
 	return chartFilePath, err
 }
 
@@ -275,7 +277,9 @@ func (c Chart) PushAndModify(settings *cli.EnvSettings, registry string, insecur
 	// Use the `Push` method to push the modified chart
 	c.PlainHTTP = plainHTTP
 	c.Repo.InsecureSkipTLSverify = insecure
-	err = c.push(modifiedPath, fmt.Sprintf("%s/%s/%s:%s", registry, chartutil.ChartsDir, c.Name, c.Version))
+	// Use chart name as repository name, retaining the chart/ prefix
+	repoName := fmt.Sprintf("%s/%s", chartutil.ChartsDir, c.Name)
+	err = c.push(modifiedPath, fmt.Sprintf("%s/%s:%s", registry, repoName, c.Version))
 	if err != nil {
 		return "", err
 	}

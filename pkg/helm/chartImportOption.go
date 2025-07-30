@@ -247,9 +247,11 @@ func (opt ChartImportOption) Run(ctx context.Context, setters ...Option) error {
 						}
 
 						if !opt.All {
-							_, err := r.Exist(egCtx, "charts/"+c.Name, c.Version)
+							// Use chart name as repository name, retaining chart/ prefix
+							chartRepoName := "charts/" + c.Name
+							_, err := r.Exist(egCtx, chartRepoName, c.Version)
 							if err == nil {
-								slog.Info("Chart already present in registry. Skipping import", slog.String("chart", "charts/"+c.Name), slog.String("registry", r.URL), slog.String("version", c.Version))
+								slog.Info("Chart already present in registry. Skipping import", slog.String("chart", chartRepoName), slog.String("registry", r.URL), slog.String("version", c.Version))
 								return nil
 							}
 							slog.Debug(err.Error())
